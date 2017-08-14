@@ -1,0 +1,89 @@
+# -*- coding: utf-8 -*-
+
+import xlrd
+import xlwt
+
+# 读取excel数据
+def readExcel(fname):
+    # 打开excel文件读取数据
+    workbook1=xlrd.open_workbook(fname)
+    # 通过索引获取第一个sheet
+    worksheet1=workbook1.sheets()[0]
+
+    coldata1 = worksheet1.col_values(2) # 获取"协议"
+    coldata2 = worksheet1.col_values(3) # 获取"开始时间"
+    coldata3 = worksheet1.col_values(5) # 获取"源IP"
+    coldata4 = worksheet1.col_values(6) # 获取"用户"
+    coldata5 = worksheet1.col_values(8) # 获取"目的IP"
+    coldata6 = worksheet1.col_values(9) # 获取"系统账号"
+
+    return [coldata1,coldata2,coldata3,coldata4,coldata5,coldata6]
+
+# 新建一个excel，并写入数据
+def writeExcel(protocol,time,sourceip,username,destip,account):
+    #新建excel文件
+    workbook2=xlwt.Workbook(encoding='utf-8',style_compression=0)
+    # 添加一个sheet
+    worksheet2=workbook2.add_sheet(u'数据',cell_overwrite_ok=True)
+
+    #  设置单元格字体样式
+    font=xlwt.Font()
+    font.name= u'宋体'
+    font.colour_index=0
+    font.height=0x00C8
+    font.bold=False
+
+    # 设置首行背景色
+    pattern=xlwt.Pattern()
+    pattern.pattern=xlwt.Pattern.SOLID_PATTERN
+    pattern.pattern_fore_colour=47
+
+    #设置边框样式
+    borders = xlwt.Borders()
+    borders.left = 17
+    borders.right = 17
+    borders.top = 17
+    borders.bottom = 17
+
+    # 设置首行单元格格式
+    style0 = xlwt.XFStyle()
+    style0.font=font
+    style0.font.bold = font.bold
+    style0.font.bold = True
+    style0.pattern = pattern
+    style0.borders = borders
+
+    # 设置其余单元格格式
+    style= xlwt.XFStyle()
+    style.font = font
+    style.borders = borders
+
+    # 写入第一行
+    row0=[u'协议',u'开始时间',u'源IP',u'用户',u'目的IP',u'系统账号']
+    for r in range(0,len(row0)):
+        worksheet2.write(0, r+1, row0[r],style0)
+    # 写入第一列
+    for i in range(1,len(protocol)):
+        worksheet2.write(i, 1, protocol[i],style)
+    # 写入第二列
+    for j in range(1,len(time)):
+        worksheet2.write(j, 2, time[j],style)
+    # 写入第三列
+    for k in range(1, len(sourceip)):
+        worksheet2.write(k, 3, sourceip[k],style)
+    # 写入第四列
+    for l in range(1, len(username)):
+        worksheet2.write(l, 4, username[l],style)
+    # 写入第五列
+    for m in range(1, len(destip)):
+        worksheet2.write(m, 5, destip[m],style)
+    # 写入第六列
+    for n in range(1, len(account)):
+        worksheet2.write(n, 6, account[n],style)
+
+    workbook2.save('rxExcel/demo.xls')
+
+if __name__ == "__main__":
+
+    data=readExcel("rxExcel/test.xls")
+    writeExcel(data[0],data[1],data[2],data[3],data[4],data[5])
